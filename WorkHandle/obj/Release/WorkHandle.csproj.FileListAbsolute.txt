@@ -1,0 +1,6 @@
+D:\CSharpProject\WorkHandle\WorkHandle\bin\Release\WorkHandle.exe.config
+D:\CSharpProject\WorkHandle\WorkHandle\bin\Release\WorkHandle.exe
+D:\CSharpProject\WorkHandle\WorkHandle\bin\Release\WorkHandle.pdb
+D:\CSharpProject\WorkHandle\WorkHandle\obj\Release\WorkHandle.csprojResolveAssemblyReference.cache
+D:\CSharpProject\WorkHandle\WorkHandle\obj\Release\WorkHandle.exe
+D:\CSharpProject\WorkHandle\WorkHandle\obj\Release\WorkHandle.pdb
