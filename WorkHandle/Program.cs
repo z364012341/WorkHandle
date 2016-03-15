@@ -25,15 +25,15 @@ namespace WorkHandle
                 shutDownStr = args.Last();
             }
             //IniFile.instance.IniWriteValue("data", "1122211", "2");
-            BuildRelease();
+            //BuildRelease();
             EditXls(logStr);
             String str = logStr.Replace(",", ",\r\n");
             //str = logStr.Replace(" ", "");
             //System.Console.WriteLine(str);
             String timeStr = DateTime.Now.ToString();
             WriteToDoc(timeStr + "\r\n" + str);
-            CopyWin32Release();
-            ExportAPKReleaseSigned();
+            CompileProject();
+            CopySimulator();
             CommitSVN();
             CommitClassesAndResources(logStr);
             if (shutDownStr == @"-s")
@@ -84,8 +84,8 @@ namespace WorkHandle
         public static void CommitClassesAndResources(String logStr)
         {
             String projectName = IniFile.instance.ProjectName();
-            String classesPath = "..\\..\\..\\games\\"+ projectName + "\\src\\client\\Classes";
-            String resourcesPath = "..\\..\\..\\games\\" + projectName + "\\src\\client\\Resources";
+            String classesPath = "..\\..\\..\\games\\"+ projectName + "\\src\\client\\frameworks\\runtime-src\\Classes";
+            String resourcesPath = "..\\..\\..\\games\\" + projectName + "\\src\\client\\frameworks\\runtime-src\\res";
             /*RunCMD("svn update ..\\..\\..\\games\\bubbleDragonSecond\\src\\client\\Classes");
             RunCMD("svn update  ..\\..\\..\\games\\bubbleDragonSecond\\src\\client\\Resources");
             RunCMD("svn add --force ..\\..\\..\\games\\bubbleDragonSecond\\src\\client\\Classes");
@@ -105,20 +105,20 @@ namespace WorkHandle
             RunCMD("svn ci -m \"日志提交\" " + journalPath);
         }
 
-        public static void BuildRelease()
-        {
-            //string fileName = @"C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe";
-            Process p = new Process();
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.FileName = IniFile.instance.DevenvPath();
-            p.StartInfo.CreateNoWindow = true;
+        //public static void BuildRelease()
+        //{
+        //    //string fileName = @"C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe";
+        //    Process p = new Process();
+        //    p.StartInfo.UseShellExecute = false;
+        //    p.StartInfo.RedirectStandardOutput = true;
+        //    p.StartInfo.FileName = IniFile.instance.DevenvPath();
+        //    p.StartInfo.CreateNoWindow = true;
 
-            p.StartInfo.Arguments = "..\\..\\..\\games\\"+ IniFile.instance.ProjectName() + "\\src\\client\\proj.win32\\"+ 
-                IniFile.instance.ProjectName() + ".vcxproj /Build \"Release|Win32\"";//参数以空格分隔，如果某个参数为空，可以传入””
-            p.Start();
-            p.WaitForExit();
-        }
+        //    p.StartInfo.Arguments = "..\\..\\..\\games\\"+ IniFile.instance.ProjectName() + "\\src\\client\\frameworks\\runtime-src\\proj.win32\\" + 
+        //        IniFile.instance.ProjectName() + ".vcxproj /Build \"Release|Win32\"";//参数以空格分隔，如果某个参数为空，可以传入””
+        //    p.Start();
+        //    p.WaitForExit();
+        //}
 
         static void EditXls(String str)
         {
@@ -159,13 +159,13 @@ namespace WorkHandle
             RunCMD("shutdown -s -t 10");
         }
 
-        static void CopyWin32Release()
+        static void CopySimulator()
         {
-            RunCMD("rd .\\src\\Debug.win32 /s /q");
-            RunCMD("xcopy ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\proj.win32\\Release.win32\\*.dll  .\\src\\Debug.win32\\ /i");
-            RunCMD("xcopy ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\proj.win32\\Release.win32\\*.exe  .\\src\\Debug.win32\\ /i");
-            RunCMD("rd .\\Resources /s /q");
-            RunCMD("xcopy ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\Resources /s .\\Resources /y /i");
+            RunCMD("rd .\\simulator /s /q");
+            RunCMD("xcopy ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\publish\\*  .\\simulator /s /i");
+            //RunCMD("xcopy ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\simulator  .\\ /i");
+            //RunCMD("rd .\\Resources /s /q");
+            //RunCMD("xcopy ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\Resources /s .\\Resources /y /i");
             CommitSVN();
         }
 
@@ -175,7 +175,7 @@ namespace WorkHandle
             RunCMD("svn ci -m \"bat提交\" *");
         }
 
-        static void ExportAPKReleaseSigned()
+        static void CompileProject()
         {
             System.Diagnostics.Process p = new System.Diagnostics.Process();
             p.StartInfo.FileName = "cmd.exe";
@@ -183,10 +183,12 @@ namespace WorkHandle
             p.StartInfo.RedirectStandardInput = true;//接受来自调用程序的输入信息
             p.Start();//启动程序
             //向cmd窗口发送输入信息
-            p.StandardInput.WriteLine("cd ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\proj.android");
-            p.StandardInput.WriteLine("build_native.py -b release");
-            p.StandardInput.WriteLine("xcopy ..\\bin\\release\\android\\" + IniFile.instance.ProjectName() + "-release-signed.apk /k ..\\..\\..\\..\\..\\模拟器\\在研\\" + IniFile.instance.SimulatorName() + " /y /i");
-            p.StandardInput.WriteLine("cd ..\\..\\..\\..\\..\\模拟器\\在研\\" + IniFile.instance.SimulatorName() + "\\");
+            //String simulatorPath = "..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\simulator";
+            p.StandardInput.WriteLine("cd ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\frameworks\\runtime-src");
+            p.StandardInput.WriteLine("cocos compile -m release -p android");
+            p.StandardInput.WriteLine("cocos compile -m release -p win32");
+            //p.StandardInput.WriteLine("xcopy ..\\bin\\release\\android\\" + IniFile.instance.ProjectName() + "-release-signed.apk /k ..\\..\\..\\..\\..\\模拟器\\在研\\" + IniFile.instance.SimulatorName() + " /y /i");
+            //p.StandardInput.WriteLine("cd ..\\..\\..\\..\\..\\模拟器\\在研\\" + IniFile.instance.SimulatorName() + "\\");
             p.StandardInput.AutoFlush = true;
             p.StandardInput.WriteLine("exit");
             p.WaitForExit();//等待程序执行完退出进程

@@ -32,7 +32,7 @@ namespace WorkHandle
             {
                 String sectionStr = SECTION_STRING;
                 this.IniWriteValue(sectionStr, KEY_DEVENV_PATH, @"C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe");
-                this.IniWriteValue(sectionStr, KEY_PROJECT_NAME, "bubbleDragonSecond");
+                this.IniWriteValue(sectionStr, KEY_PROJECT_NAME, "bubbleDragonSecondLua");
                 this.IniWriteValue(sectionStr, KEY_JOURNAL_PATH, @"E:\svn\shared_doc\工作日志\journal_黄泽昊.xlsx");
                 this.IniWriteValue(sectionStr, KEY_SIMULATOR_NAME, "泡泡西游");
             }
