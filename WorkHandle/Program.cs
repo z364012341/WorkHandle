@@ -94,8 +94,8 @@ namespace WorkHandle
             RunCMD("svn ci -m \"资源提交\" ..\\..\\..\\games\\bubbleDragonSecond\\src\\client\\Resources");
             RunCMD("svn update  E:\\svn\\shared_doc\\工作日志\\journal_黄泽昊.xlsx");
             RunCMD("svn ci -m \"日志提交\" E:\\svn\\shared_doc\\工作日志\\journal_黄泽昊.xlsx"); */
-            RunCMD("svn update " + classesPath);
-            RunCMD("svn update " + resourcesPath);
+            //RunCMD("svn update " + classesPath);
+            //RunCMD("svn update " + resourcesPath);
             RunCMD("svn add --force " + classesPath);
             RunCMD("svn add --force " + resourcesPath);
             RunCMD("svn ci -m \"" + logStr + "\" " + classesPath);
@@ -105,20 +105,20 @@ namespace WorkHandle
             RunCMD("svn ci -m \"日志提交\" " + journalPath);
         }
 
-        //public static void BuildRelease()
-        //{
-        //    //string fileName = @"C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe";
-        //    Process p = new Process();
-        //    p.StartInfo.UseShellExecute = false;
-        //    p.StartInfo.RedirectStandardOutput = true;
-        //    p.StartInfo.FileName = IniFile.instance.DevenvPath();
-        //    p.StartInfo.CreateNoWindow = true;
+        public static void BuildRelease()
+        {
+            //string fileName = @"C:/Program Files (x86)/Microsoft Visual Studio 14.0/Common7/IDE/devenv.exe";
+            Process p = new Process();
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.FileName = IniFile.instance.DevenvPath();
+            p.StartInfo.CreateNoWindow = true;
 
-        //    p.StartInfo.Arguments = "..\\..\\..\\games\\"+ IniFile.instance.ProjectName() + "\\src\\client\\frameworks\\runtime-src\\proj.win32\\" + 
-        //        IniFile.instance.ProjectName() + ".vcxproj /Build \"Release|Win32\"";//参数以空格分隔，如果某个参数为空，可以传入””
-        //    p.Start();
-        //    p.WaitForExit();
-        //}
+            p.StartInfo.Arguments = "..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\frameworks\\runtime-src\\proj.win32\\" +
+                IniFile.instance.ProjectName() + ".vcxproj /Build \"Release|Win32\"";//参数以空格分隔，如果某个参数为空，可以传入””
+            p.Start();
+            p.WaitForExit();
+        }
 
         static void EditXls(String str)
         {
@@ -162,8 +162,12 @@ namespace WorkHandle
         static void CopySimulator()
         {
             RunCMD("rd .\\simulator /s /q");
-            RunCMD("xcopy ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\publish\\*  .\\simulator /s /i");
-            //RunCMD("xcopy ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\simulator  .\\ /i");
+            RunCMD("xcopy ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\publish\\android  .\\simulator\\android /s /i");
+            RunCMD("xcopy ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\simulator\\win32\\*  .\\simulator\\win32 /s /i");
+
+            RunCMD("xcopy ..\\..\\common\\dll\\msvcp140d.dll  .\\simulator\\win32 /i");
+            RunCMD("xcopy ..\\..\\common\\dll\\vcruntime140d.dll  .\\simulator\\win32 /i");
+            RunCMD("xcopy ..\\..\\common\\dll_cocos_physicsworld\\ucrtbased.dll  .\\simulator\\win32 /i");
             //RunCMD("rd .\\Resources /s /q");
             //RunCMD("xcopy ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\Resources /s .\\Resources /y /i");
             CommitSVN();
@@ -186,7 +190,7 @@ namespace WorkHandle
             //String simulatorPath = "..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\simulator";
             p.StandardInput.WriteLine("cd ..\\..\\..\\games\\" + IniFile.instance.ProjectName() + "\\src\\client\\frameworks\\runtime-src");
             p.StandardInput.WriteLine("cocos compile -m release -p android");
-            p.StandardInput.WriteLine("cocos compile -m release -p win32");
+            //p.StandardInput.WriteLine("cocos compile -m release -p win32");
             //p.StandardInput.WriteLine("xcopy ..\\bin\\release\\android\\" + IniFile.instance.ProjectName() + "-release-signed.apk /k ..\\..\\..\\..\\..\\模拟器\\在研\\" + IniFile.instance.SimulatorName() + " /y /i");
             //p.StandardInput.WriteLine("cd ..\\..\\..\\..\\..\\模拟器\\在研\\" + IniFile.instance.SimulatorName() + "\\");
             p.StandardInput.AutoFlush = true;
